@@ -1,0 +1,17 @@
+- hosts: k8s
+  become: true
+  roles:
+    - user_setup
+    - system_pre
+    - container_runtime
+    - kubernetes_install
+
+#- hosts: k8s_master
+#  become: true
+#  roles:
+#    - cluster_init
+
+#- hosts: k8s_workers
+#  become: true
+#  roles:
+#    - workers_join

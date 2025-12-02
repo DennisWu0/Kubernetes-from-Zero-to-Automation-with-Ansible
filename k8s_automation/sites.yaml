@@ -1,0 +1,7 @@
+- hosts: k8s_master
+  become: true
+  become_user: petops
+  roles:
+    - cni_install
+    - metallb_install
+

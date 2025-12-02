@@ -1,0 +1,70 @@
+# Config the ansible environment
+
+sudo apt update 
+sudo apt install ansible 
+ansible --version
+
+ssh-keygen -t ed25519 -C "ansible"
+ssh-copy-id -i ~/.ssh/id_ed25519.pub -p [port] username@NODE_IP
+
+# Disable Swap
+
+grep -i swap /etc/fstab
+
+
+# Enable Kernel Modules for Networking
+
+sysctl net.bridge.bridge-nf-call-iptables
+sysctl net.ipv4.ip_forward
+
+ansible all -m shell -a "sysctl net.bridge.bridge-nf-call-iptables; sysctl net.ipv4.ip_forward "
+
+
+# Install Container Runtime
+
+cat /etc/containerd/config.toml
+ansible all -m shell -a "grep -nC 5 SystemdCgroup /etc/containerd/config.toml "
+
+Note: check the content of this file cause if we dont use the sudo permissions the tee will deny to copy the crictl 
+
+
+# Install Kubernetes Components
+
+kubeadm version
+kubelet --version
+kubectl version --client
+
+ansible all -m shell -a "kubeadm version; kubelet --version; kubectl version --client "
+
+
+# CNI
+
+kubectl get nodes
+kubectl get ippool default-pool -o yaml
+
+# MetalLB
+
+kubectl get pods -n metallb-system
+
+-----------------------------------
+Note: manually run the k8s install 
+
+# Initialize the Cluster
+sudo kubeadm init
+
+and copy the command to each worker nodes to join them
+
+mkdir -p $HOME/.kube
+sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+-----------------------------------
+
+
+# run project
+
+ansible-playbook -i inventory playbook.yaml --ask-become-pass -vvv
+ansible-playbook -i inventory sites.yaml --ask-become-pass -vvv
+
+

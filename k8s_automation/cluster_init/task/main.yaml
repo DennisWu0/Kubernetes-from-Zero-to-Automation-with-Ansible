@@ -1,0 +1,21 @@
+---
+
+- name: Initialize Kubernetes master
+  ansible.builtin.command: sudo kubeadm init
+  args:
+    creates: /etc/kubernetes/admin.conf
+  register: kubeinit_output
+
+# we can store the join syntax and use them later
+- name: Save join command
+  ansible.builtin.copy:
+    dest: /tmp/kube_join.txt
+    content: "{{ kubeinit_output.stdout }}"
+
+# i just want to make sure the directory is in my petops u can remove this line become_user if you are a beginner
+- name: Set up kube config for user
+  become_user: "{{ ansible_user }}"
+  ansible.builtin.shell: |
+    mkdir -p $HOME/.kube
+    sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config

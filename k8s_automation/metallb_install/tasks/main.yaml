@@ -1,0 +1,5 @@
+- name: Deploy MetalLB manifests
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
+  become: yes
+  become_user: petops
+

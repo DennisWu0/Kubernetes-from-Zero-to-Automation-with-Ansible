@@ -1,0 +1,13 @@
+---
+
+- name: Deploy Calico
+  command: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.30.4/manifests/calico.yaml
+
+- name: Disable VXLAN and IPIP for Calico default pool
+  command: >
+    kubectl patch ippools.crd.projectcalico.org default-ipv4-ippool -n kube-system --type='merge' -p
+    '{"spec":{"vxlanMode":"Never","ipipMode":"Never","natOutgoing":true,"nodeSelector":"all()"}}'
+
+- name: Restart Calico node pods
+  command: kubectl delete pod -n kube-system -l k8s-app=calico-node
+
