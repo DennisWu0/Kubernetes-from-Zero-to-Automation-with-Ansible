@@ -1,3 +1,5 @@
+# Step-by-Step Workflow
+
 ### Step 1: Install Ansible
 
 On the control machine:
@@ -28,12 +30,12 @@ sudo kubeadm init
 After initialization, configure `kubectl` access:
 
 ```bash
-mkdir -p$HOME/.kube
-sudocp /etc/kubernetes/admin.conf$HOME/.kube/config
-sudochown $(id -u):$(id -g)$HOME/.kube/config
+mkdir -p $HOME/.kube
+sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-Then copy the **`kubeadm join` command** and run it on each worker node.
+**→ Then copy the `kubeadm join` command and run it on each worker node**.
 
 ### Step 4: Install CNI and MetalLB with Ansible
 
